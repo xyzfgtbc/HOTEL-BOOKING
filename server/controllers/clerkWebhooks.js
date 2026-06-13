@@ -1,7 +1,8 @@
-import User from "../models.User.js";
+import User from "../models/User.js";
 import { Webhook } from "svix"; 
 
 const clerWebhooks = async (req, res) =>{
+    console.log("WEBHOOK HIT");
     try{
         //Create a Svix instance with clerk webhook secret
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
@@ -18,10 +19,12 @@ const clerWebhooks = async (req, res) =>{
 
         //Getting data from request body
         const{data, type} =req.body
+        console.log("TYPE:", type);
+        console.log("DATA:", JSON.stringify(data, null, 2));
         
         const userData = {
             _id: data.id,
-            email: data.email_addresss[0].email.email_addresss,
+            email: data.email_address[0].email.email_address,
             username: data.first_name + " " + data.last_name,
             image: data.image_url,
         }
@@ -50,7 +53,7 @@ const clerWebhooks = async (req, res) =>{
         res.json({success: true, message: "Webhook Receive"})
 
     }catch (error) {
-        console.log(error.message);
+        console.error(error);
         res.json({success: false, message: error.message});
     } 
 
